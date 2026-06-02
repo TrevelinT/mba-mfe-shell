@@ -1,0 +1,176 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  packages: read
+  actions: write
+
+jobs:
+  build:
+    name: Build and Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Checkout product remote
+        if: vars.MFE_PRODUCT_REPO != ''
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ vars.MFE_PRODUCT_REPO }}
+          path: mfe-deps/product
+          persist-credentials: false
+
+      - name: Checkout buy-box remote
+        if: vars.MFE_BUY_BOX_REPO != ''
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ vars.MFE_BUY_BOX_REPO }}
+          path: mfe-deps/buy-box
+          persist-credentials: false
+
+      - name: Checkout cart remote
+        if: vars.MFE_CART_REPO != ''
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ vars.MFE_CART_REPO }}
+          path: mfe-deps/cart
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@mfe"
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint and format
+        run: npm run format-and-lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Report build artifacts
+        run: npm run report-build-artifacts
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: shell-dist
+          path: dist/
+          if-no-files-found: error
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Test
+        run: npm run test-coverage
+
+  e2e:
+    name: E2E Tests
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Checkout product remote
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ vars.MFE_PRODUCT_REPO }}
+          path: remotes/product
+          persist-credentials: false
+
+      - name: Checkout buy-box remote
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ vars.MFE_BUY_BOX_REPO }}
+          path: remotes/buy-box
+          persist-credentials: false
+
+      - name: Checkout cart remote
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ vars.MFE_CART_REPO }}
+          path: remotes/cart
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@mfe"
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build remotes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          start_remote() {
+            local dir="$1"
+            (cd "$dir" && npm ci && npm run build)
+            (cd "$dir" && npm run preview > /tmp/preview-"$(basename "$dir").log" 2>&1 &)
+          }
+          start_remote remotes/product
+          start_remote remotes/buy-box
+          start_remote remotes/cart
+          for port in 5001 5002 5003; do
+            for _ in $(seq 1 60); do
+              if curl -sf "http://localhost:${port}/assets/remoteEntry.js" > /dev/null; then
+                echo "Remote ready on port ${port}"
+                break
+              fi
+              sleep 2
+            done
+          done
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: shell-dist
+          path: dist/
+
+      - name: Install Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        env:
+          CI: true
+          PLAYWRIGHT_HTML_OPEN: never
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/

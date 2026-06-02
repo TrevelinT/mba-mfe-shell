@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@import "@mfe/config/tailwind/theme";
+
+@source "./**/*.{tsx,ts}";
