@@ -10,6 +10,7 @@
 	"scripts": {
 		"dev": "vite --port 5000",
 		"build": "tsc && vite build",
+		"build:local": "VITE_MFE_REMOTES=local npm run build",
 		"preview": "vite preview --port 5000",
 		"type-check": "tsc --noEmit",
 		"format-and-lint": "biome check .",

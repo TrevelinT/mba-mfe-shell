@@ -66,6 +66,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_MFE_REMOTES: pages
 
       - name: Report build artifacts
         run: npm run report-build-artifacts
@@ -96,27 +98,6 @@ jobs:
           fetch-depth: 2
           persist-credentials: false
 
-      - name: Checkout product remote
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ vars.MFE_PRODUCT_REPO }}
-          path: remotes/product
-          persist-credentials: false
-
-      - name: Checkout buy-box remote
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ vars.MFE_BUY_BOX_REPO }}
-          path: remotes/buy-box
-          persist-credentials: false
-
-      - name: Checkout cart remote
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ vars.MFE_CART_REPO }}
-          path: remotes/cart
-          persist-credentials: false
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -130,27 +111,15 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build remotes
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify GitHub Pages remotes
         run: |
           set -euo pipefail
-          start_remote() {
-            local dir="$1"
-            (cd "$dir" && npm ci && npm run build)
-            (cd "$dir" && npm run preview > /tmp/preview-"$(basename "$dir").log" 2>&1 &)
-          }
-          start_remote remotes/product
-          start_remote remotes/buy-box
-          start_remote remotes/cart
-          for port in 5001 5002 5003; do
-            for _ in $(seq 1 60); do
-              if curl -sf "http://localhost:${port}/assets/remoteEntry.js" > /dev/null; then
-                echo "Remote ready on port ${port}"
-                break
-              fi
-              sleep 2
-            done
+          for url in \
+            "https://trevelint.github.io/mba-mfe-product/assets/remoteEntry.js" \
+            "https://trevelint.github.io/mba-mfe-buy-box/assets/remoteEntry.js" \
+            "https://trevelint.github.io/mba-mfe-cart/assets/remoteEntry.js"; do
+            echo "Checking ${url}"
+            curl -sfI "$url"
           done
 
       - name: Download build artifacts
