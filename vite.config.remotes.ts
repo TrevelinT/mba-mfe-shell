@@ -38,10 +38,7 @@ function localRemoteEntry(port: number): string {
 	return `http://localhost:${port}/assets/remoteEntry.js`;
 }
 
-function resolveStrategy(
-	mode: string,
-	env: MfeRemotesEnv,
-): MfeRemotesStrategy {
+function resolveStrategy(mode: string, env: MfeRemotesEnv): MfeRemotesStrategy {
 	const explicit = env.VITE_MFE_REMOTES;
 	if (explicit === "local" || explicit === "pages") {
 		return explicit;
