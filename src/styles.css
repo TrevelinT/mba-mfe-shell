@@ -1,4 +1,4 @@
 @import "tailwindcss";
-@import "@mfe/config/tailwind/theme";
+@import "@trevelint/mfe-config/tailwind/theme";
 
 @source "./**/*.{tsx,ts}";

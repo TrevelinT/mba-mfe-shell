@@ -22,7 +22,7 @@
 		"report-build-artifacts": "node scripts/report-build-artifacts.mjs"
 	},
 	"dependencies": {
-		"@mfe/config": "file:../../../../../../tmp/mfe-config-1.0.0.tgz",
+		"@trevelint/mfe-config": "0.0.1",
 		"react": "19.2.6",
 		"react-dom": "19.2.6"
 	},
