@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
@@ -6,41 +5,12 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const mfeRoot = path.resolve(dirname, "..");
-
-function resolveRemote(
-	remoteModule: string,
-	...relativePaths: string[]
-): Record<string, string> {
-	for (const relativePath of relativePaths) {
-		const siblingPath = path.join(mfeRoot, relativePath);
-		if (existsSync(siblingPath)) {
-			return { [remoteModule]: siblingPath };
-		}
-		const ciPath = path.join(dirname, relativePath);
-		if (existsSync(ciPath)) {
-			return { [remoteModule]: ciPath };
-		}
-	}
-	return {};
-}
+const remotesDir = path.join(dirname, "src/test/remotes");
 
 const federationAliases = {
-	...resolveRemote(
-		"product/Product",
-		"product/src/components/product-container.tsx",
-		"mfe-deps/product/src/components/product-container.tsx",
-	),
-	...resolveRemote(
-		"buyBox/BuyBox",
-		"buy-box/src/components/buy-box-container.tsx",
-		"mfe-deps/buy-box/src/components/buy-box-container.tsx",
-	),
-	...resolveRemote(
-		"cart/Cart",
-		"cart/src/components/cart-container.tsx",
-		"mfe-deps/cart/src/components/cart-container.tsx",
-	),
+	"product/Product": path.join(remotesDir, "product.tsx"),
+	"buyBox/BuyBox": path.join(remotesDir, "buy-box.tsx"),
+	"cart/Cart": path.join(remotesDir, "cart.tsx"),
 };
 
 export default defineConfig({

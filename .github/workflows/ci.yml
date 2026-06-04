@@ -24,30 +24,6 @@ jobs:
           fetch-depth: 2
           persist-credentials: false
 
-      - name: Checkout product remote
-        if: vars.MFE_PRODUCT_REPO != ''
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ vars.MFE_PRODUCT_REPO }}
-          path: mfe-deps/product
-          persist-credentials: false
-
-      - name: Checkout buy-box remote
-        if: vars.MFE_BUY_BOX_REPO != ''
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ vars.MFE_BUY_BOX_REPO }}
-          path: mfe-deps/buy-box
-          persist-credentials: false
-
-      - name: Checkout cart remote
-        if: vars.MFE_CART_REPO != ''
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ vars.MFE_CART_REPO }}
-          path: mfe-deps/cart
-          persist-credentials: false
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
