@@ -1,6 +1,6 @@
 # Shell (host) MFE
 
-Host application: layout, breadcrumb, header, footer. Loads federated remotes at runtime.
+Host application: layout, breadcrumb, header, footer. Loads federated remotes at runtime. Vite `base` is `/mba-mfe-shell/` (GitHub Pages).
 
 ## Federation remotes
 
@@ -20,14 +20,17 @@ Override strategy with `VITE_MFE_REMOTES=local|pages`, or set full URLs via `VIT
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Dev server (port 5000); localhost remotes; requires remotes on preview |
+| `npm run dev` | Dev server (port 5000); localhost remotes; requires remotes on preview. Open [http://localhost:5000/mba-mfe-shell/](http://localhost:5000/mba-mfe-shell/) |
 | `npm run build` | Type-check + production build (GitHub Pages remotes) |
 | `npm run build:local` | Production build with localhost remotes (for local preview workflow) |
-| `npm run preview` | Serve `dist/` (port 5000) |
+| `npm run preview` | Serve `dist/` (port 5000) at `/mba-mfe-shell/` |
 | `npm run test` | Shell unit tests (Vitest; federation remotes stubbed) |
 | `npm run test:e2e` | Playwright integration tests (live GitHub Pages remotes) |
 | `npm run format-and-lint` | Biome check |
 | `npm run report-build-artifacts` | CI build size summary |
+| `npm run changeset` | Add a changeset (semver bump + notes) |
+| `npm run version-packages` | Apply pending changesets (used by Release CI) |
+| `npm run release` | Create GitHub tag/release `vX.Y.Z` (used by Release CI) |
 
 ## Local development
 
@@ -41,7 +44,33 @@ Use `npm run dev` (localhost remotes) or `npm run build:local && npm run preview
 
 ## CI
 
-- **Build job:** lint, build with GitHub Pages remotes (`VITE_MFE_REMOTES=pages`), artifact upload (`shell-dist`), type-check, unit tests (stubbed remotes).
-- **E2E job:** downloads `shell-dist`, verifies deployed `remoteEntry.js` URLs on GitHub Pages, runs Playwright against `vite preview` (cross-MFE integration).
+[GitHub Actions](https://docs.github.com/en/actions) ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on push to `main`, on pull request open/sync, and on demand via **Run workflow** (`workflow_dispatch`).
+
+| Job | What runs |
+|-----|-----------|
+| **Build and Quality** | lint → build (`VITE_MFE_REMOTES=pages`) → artifact report → upload `shell-dist` → type-check → test-coverage |
+| **E2E Tests** | `needs: build` → download `shell-dist` → verify live `remoteEntry.js` → Playwright |
+| **Lighthouse CI** | `needs: build` → download `shell-dist` → preview at `/mba-mfe-shell/` |
 
 E2E requires remotes to be **deployed** on GitHub Pages.
+
+## Release
+
+Versions are managed with [Changesets](https://github.com/changesets/changesets). Include a changeset in any PR that should bump the version:
+
+```sh
+npm run changeset
+```
+
+### What happens on `main`
+
+1. Merge the feature PR (with changesets) to `main`.
+2. **CI** runs. Only if it succeeds does **Release** ([`.github/workflows/release.yml`](.github/workflows/release.yml)) start.
+3. Release opens or updates a **Version Packages** PR.
+4. Review and merge that PR when you want to cut a version.
+5. CI runs again. On success, Release runs `npm run release`: if the version is not `0.0.0` and `v{version}` does not exist yet, it creates that GitHub tag and Release from `CHANGELOG.md`.
+6. **CD** ([`.github/workflows/cd.yml`](.github/workflows/cd.yml)) starts after Release succeeds. If a `v*` tag points at that commit, it reuses the CI `shell-dist` artifact and deploys to GitHub Pages.
+
+Live site: [https://trevelint.github.io/mba-mfe-shell/](https://trevelint.github.io/mba-mfe-shell/).
+
+**One-time repo setting:** Settings → Pages → Build and deployment → Source = **GitHub Actions** (not a branch).

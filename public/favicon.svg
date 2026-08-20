@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Game Store">
+  <rect width="32" height="32" rx="6" fill="#e60012"/>
+  <!-- Gamepad body -->
+  <path
+    fill="#fff7f6"
+    d="M8.5 12.5c-1.4 0-2.5 1.2-2.5 2.6v2.8c0 2.3 1.9 4.1 4.2 4.1h1.1c.4 0 .8-.2 1-.5l.9-1.5h6.6l.9 1.5c.2.3.6.5 1 .5h1.1c2.3 0 4.2-1.8 4.2-4.1v-2.8c0-1.4-1.1-2.6-2.5-2.6H8.5z"
+  />
+  <!-- D-pad -->
+  <path fill="#e60012" d="M11.2 15.1h1.2v1.2h1.2v1.2h-1.2v1.2h-1.2v-1.2H10v-1.2h1.2z"/>
+  <!-- Action buttons -->
+  <circle cx="20.2" cy="15.6" r=".7" fill="#e60012"/>
+  <circle cx="22" cy="17.2" r=".7" fill="#e60012"/>
+  <circle cx="20.2" cy="18.8" r=".7" fill="#e60012"/>
+  <circle cx="18.4" cy="17.2" r=".7" fill="#e60012"/>
+</svg>

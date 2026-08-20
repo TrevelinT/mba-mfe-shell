@@ -14,7 +14,7 @@ export default defineConfig({
 		},
 	},
 	use: {
-		baseURL: "http://localhost:5000",
+		baseURL: "http://localhost:5000/mba-mfe-shell/",
 		viewport: { width: 1280, height: 720 },
 		deviceScaleFactor: 1,
 		screenshot: "only-on-failure",
@@ -39,12 +39,12 @@ export default defineConfig({
 	webServer: process.env.CI
 		? {
 				command: "npm run preview",
-				url: "http://localhost:5000",
+				url: "http://localhost:5000/mba-mfe-shell/",
 				reuseExistingServer: false,
 			}
 		: {
 				command: "npm run dev",
-				url: "http://localhost:5000",
+				url: "http://localhost:5000/mba-mfe-shell/",
 				reuseExistingServer: true,
 			},
 });

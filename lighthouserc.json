@@ -1,0 +1,21 @@
+{
+	"ci": {
+		"collect": {
+			"startServerCommand": "npm run preview",
+			"startServerReadyPattern": "Local:",
+			"url": ["http://localhost:5000/mba-mfe-shell/"],
+			"numberOfRuns": 1,
+			"puppeteerScript": "./scripts/lighthouse-wait-for-content.cjs",
+			"puppeteerLaunchOptions": {
+				"args": ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
+			}
+		},
+		"assert": {
+			"preset": "lighthouse:no-pwa",
+			"assertions": {
+				"is-crawlable": "off",
+				"unused-javascript": "warn"
+			}
+		}
+	}
+}

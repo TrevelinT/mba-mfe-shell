@@ -3,6 +3,10 @@ import { expect, test } from "../fixtures";
 test.describe("Product page", () => {
 	test("displays product title and empty cart", async ({ page }) => {
 		await expect(
+			page.getByRole("link", { name: "Go to homepage" }),
+		).toBeVisible();
+		await expect(page.getByRole("img", { name: "Game Store" })).toBeVisible();
+		await expect(
 			page.getByRole("heading", {
 				name: "Nintendo Switch 2 - Bundle Mario Kart World",
 			}),
@@ -21,17 +25,9 @@ test.describe("Product page", () => {
 			page.getByRole("button", { name: "Carrinho de compras, 2 itens" }),
 		).toBeVisible({ timeout: 5000 });
 
-		const cartTrigger = page
-			.locator("header")
-			.getByRole("button", { name: /Carrinho de compras/ });
-		const cartBox = await cartTrigger.boundingBox();
-		if (!cartBox) {
-			throw new Error("Cart trigger not found in header");
-		}
-		await page.mouse.move(
-			cartBox.x + cartBox.width / 2,
-			cartBox.y + cartBox.height / 2,
-		);
+		await page
+			.getByRole("button", { name: /Carrinho de compras, 2 itens/ })
+			.click();
 		await expect(
 			page.getByRole("heading", { name: "Seu carrinho" }),
 		).toBeVisible();
@@ -75,17 +71,9 @@ test.describe("@visual Product page", () => {
 			page.getByRole("button", { name: "Carrinho de compras, 2 itens" }),
 		).toBeVisible({ timeout: 5000 });
 
-		const cartTrigger = page
-			.locator("header")
-			.getByRole("button", { name: /Carrinho de compras/ });
-		const cartBox = await cartTrigger.boundingBox();
-		if (!cartBox) {
-			throw new Error("Cart trigger not found in header");
-		}
-		await page.mouse.move(
-			cartBox.x + cartBox.width / 2,
-			cartBox.y + cartBox.height / 2,
-		);
+		await page
+			.getByRole("button", { name: /Carrinho de compras, 2 itens/ })
+			.click();
 		await expect(
 			page.getByRole("heading", { name: "Seu carrinho" }),
 		).toBeVisible();
