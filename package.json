@@ -26,7 +26,7 @@
 		"release": "node scripts/release.mjs"
 	},
 	"dependencies": {
-		"@trevelint/mfe-config": "0.0.1",
+		"@trevelint/mfe-config": "0.1.0",
 		"react": "19.2.6",
 		"react-dom": "19.2.6"
 	},
