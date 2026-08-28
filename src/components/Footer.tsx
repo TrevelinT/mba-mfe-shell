@@ -34,7 +34,7 @@ function Footer() {
 					<p className="font-headline-md text-headline-md font-bold text-on-secondary-container dark:text-on-secondary-fixed m-0">
 						Game Store
 					</p>
-					<small className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim m-0">
+					<small className="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim m-0">
 						© {currentYear} Game Store Inc. Todos os direitos reservados.
 					</small>
 				</div>
@@ -42,7 +42,7 @@ function Footer() {
 					<ul className="flex flex-wrap justify-center gap-md list-none m-0 p-0">
 						<li id="footer-privacy-policy">
 							<a
-								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+								className="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-privacy-policy"
 							>
 								Política de Privacidade
@@ -50,7 +50,7 @@ function Footer() {
 						</li>
 						<li id="footer-terms-of-service">
 							<a
-								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+								className="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-terms-of-service"
 							>
 								Termos de Uso
@@ -58,7 +58,7 @@ function Footer() {
 						</li>
 						<li id="footer-shipping-info">
 							<a
-								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+								className="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-shipping-info"
 							>
 								Informações de Entrega
@@ -66,7 +66,7 @@ function Footer() {
 						</li>
 						<li id="footer-returns">
 							<a
-								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+								className="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-returns"
 							>
 								Devoluções
@@ -74,7 +74,7 @@ function Footer() {
 						</li>
 						<li id="footer-contact-us">
 							<a
-								className="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed-dim hover:underline transition-all"
+								className="font-body-sm text-body-sm text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:underline transition-all"
 								href="#footer-contact-us"
 							>
 								Fale Conosco

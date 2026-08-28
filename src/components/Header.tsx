@@ -2,6 +2,17 @@ import React, { Suspense } from "react";
 
 const Cart = React.lazy(() => import("cart/Cart"));
 
+function CartRemotePlaceholder() {
+	return (
+		<div
+			aria-busy="true"
+			aria-label="Loading cart"
+			className="size-10"
+			role="status"
+		/>
+	);
+}
+
 function Header() {
 	return (
 		<header className="bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline fixed top-0 w-full z-50">
@@ -19,7 +30,7 @@ function Header() {
 						width={180}
 					/>
 				</a>
-				<Suspense fallback={null}>
+				<Suspense fallback={<CartRemotePlaceholder />}>
 					<Cart />
 				</Suspense>
 			</div>

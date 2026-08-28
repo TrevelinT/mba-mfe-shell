@@ -4,6 +4,8 @@ module.exports = async (browser, context) => {
 
 	await page.waitForFunction(
 		() =>
+			!document.querySelector('[aria-label="Loading product"]') &&
+			!document.querySelector('[aria-label="Loading buy box"]') &&
 			!document.querySelector('[aria-label="Loading product details"]') &&
 			!document.querySelector('[aria-label="Loading buy box offer"]'),
 		{ timeout: 15000 },
