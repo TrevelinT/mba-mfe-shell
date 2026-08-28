@@ -72,9 +72,7 @@ function resolveRemoteOrigin(
 	if (override) {
 		return new URL(override).origin;
 	}
-	return strategy === "local"
-		? `http://localhost:${localPort}`
-		: pagesOrigin;
+	return strategy === "local" ? `http://localhost:${localPort}` : pagesOrigin;
 }
 
 function remoteProxyPath(base: string): string {
@@ -114,12 +112,7 @@ export function resolveRemoteAssetProxy(
 	const proxy: Record<string, ProxyOptions> = {};
 
 	for (const { base, port, override } of remotes) {
-		const target = resolveRemoteOrigin(
-			override,
-			strategy,
-			pagesOrigin,
-			port,
-		);
+		const target = resolveRemoteOrigin(override, strategy, pagesOrigin, port);
 
 		proxy[remoteProxyPath(base)] = {
 			target,
