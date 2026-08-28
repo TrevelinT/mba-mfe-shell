@@ -3,7 +3,10 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
 import { defineConfig, loadEnv } from "vite";
-import { resolveFederationRemotes } from "./vite.config.remotes";
+import {
+	resolveFederationRemotes,
+	resolveRemoteAssetProxy,
+} from "./vite.config.remotes";
 
 const CRITICAL_JS_ASSET = /\/assets\/(?:index|vendor)-[^"']+\.js$/;
 
@@ -75,6 +78,7 @@ function criticalPathPreloadHints(): Plugin {
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
 	const remotes = resolveFederationRemotes(mode, env);
+	const remoteAssetProxy = resolveRemoteAssetProxy(mode, env);
 
 	return {
 		base: process.env.VITE_BASE ?? "/mba-mfe-shell/",
@@ -111,11 +115,13 @@ export default defineConfig(({ mode }) => {
 			port: 5000,
 			strictPort: true,
 			cors: true,
+			proxy: remoteAssetProxy,
 		},
 		preview: {
 			port: 5000,
 			strictPort: true,
 			cors: true,
+			proxy: remoteAssetProxy,
 		},
 	};
 });

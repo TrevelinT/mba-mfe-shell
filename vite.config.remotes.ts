@@ -1,3 +1,5 @@
+import type { ProxyOptions } from "vite";
+
 export type MfeRemotesStrategy = "local" | "pages";
 
 export type MfeRemotesEnv = {
@@ -8,15 +10,15 @@ export type MfeRemotesEnv = {
 	VITE_REMOTE_CART_URL?: string;
 };
 
-const DEFAULT_PAGES_ORIGIN = "https://trevelint.github.io";
+export const DEFAULT_PAGES_ORIGIN = "https://trevelint.github.io";
 
-const PAGES_BASES = {
+export const PAGES_BASES = {
 	product: "/mba-mfe-product/",
 	buyBox: "/mba-mfe-buy-box/",
 	cart: "/mba-mfe-cart/",
 } as const;
 
-const LOCAL_PORTS = {
+export const LOCAL_PORTS = {
 	product: 5001,
 	buyBox: 5002,
 	cart: 5003,
@@ -59,6 +61,74 @@ function resolveRemoteUrl(
 	return strategy === "local"
 		? localRemoteEntry(localPort)
 		: pagesRemoteEntry(pagesOrigin, pagesBase);
+}
+
+function resolveRemoteOrigin(
+	override: string | undefined,
+	strategy: MfeRemotesStrategy,
+	pagesOrigin: string,
+	localPort: number,
+): string {
+	if (override) {
+		return new URL(override).origin;
+	}
+	return strategy === "local"
+		? `http://localhost:${localPort}`
+		: pagesOrigin;
+}
+
+function remoteProxyPath(base: string): string {
+	const normalizedBase = base.startsWith("/") ? base : `/${base}`;
+	return normalizedBase.endsWith("/")
+		? normalizedBase.slice(0, -1)
+		: normalizedBase;
+}
+
+export function resolveRemoteAssetProxy(
+	mode: string,
+	env: MfeRemotesEnv,
+): Record<string, ProxyOptions> {
+	const strategy = resolveStrategy(mode, env);
+	const pagesOrigin = normalizeOrigin(
+		env.VITE_PAGES_ORIGIN ?? DEFAULT_PAGES_ORIGIN,
+	);
+
+	const remotes = [
+		{
+			base: PAGES_BASES.product,
+			port: LOCAL_PORTS.product,
+			override: env.VITE_REMOTE_PRODUCT_URL,
+		},
+		{
+			base: PAGES_BASES.buyBox,
+			port: LOCAL_PORTS.buyBox,
+			override: env.VITE_REMOTE_BUY_BOX_URL,
+		},
+		{
+			base: PAGES_BASES.cart,
+			port: LOCAL_PORTS.cart,
+			override: env.VITE_REMOTE_CART_URL,
+		},
+	] as const;
+
+	const proxy: Record<string, ProxyOptions> = {};
+
+	for (const { base, port, override } of remotes) {
+		const target = resolveRemoteOrigin(
+			override,
+			strategy,
+			pagesOrigin,
+			port,
+		);
+
+		proxy[remoteProxyPath(base)] = {
+			target,
+			changeOrigin: true,
+			secure: !target.startsWith("http://localhost"),
+		};
+	}
+
+	return proxy;
 }
 
 export function resolveFederationRemotes(

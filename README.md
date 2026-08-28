@@ -16,6 +16,8 @@ Type declarations: `src/remotes.d.ts`.
 
 Override strategy with `VITE_MFE_REMOTES=local|pages`, or set full URLs via `VITE_REMOTE_*_URL`. Copy [`.env.example`](.env.example) to `.env.development` or `.env.production` (gitignored) if you need local overrides; otherwise mode defaults apply (`dev` → local, `build` → pages).
 
+In **dev** and **preview**, the shell Vite server proxies static assets under `/mba-mfe-product/`, `/mba-mfe-buy-box/`, and `/mba-mfe-cart/` to the same origin as federation remotes (GitHub Pages or localhost preview ports). This lets root-relative image URLs from deployed remotes resolve correctly when the shell runs on `localhost:5000`.
+
 ## Scripts
 
 | Script | Description |
